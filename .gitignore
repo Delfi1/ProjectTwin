@@ -1,0 +1,8 @@
+/.venv
+
+/instant-ngp
+/colmap_text
+/colmap_sparse
+/colmap.db
+
+/lab
