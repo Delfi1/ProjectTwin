@@ -5,4 +5,8 @@
 /colmap_sparse
 /colmap.db
 
+*/target
+*Cargo.lock
+*.gradle
+
 /lab

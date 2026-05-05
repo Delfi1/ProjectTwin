@@ -1,0 +1,11 @@
+[package]
+name = "twin_android"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "twin_android"
+crate-type = ["lib", "cdylib"]
+
+[dependencies]
+bevy = { version = "0.18.1", features = ["android-game-activity"] }
