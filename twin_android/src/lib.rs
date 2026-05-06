@@ -5,7 +5,7 @@ use bevy::{
     input::{gestures::RotationGesture, touch::TouchPhase},
     log::{Level, LogPlugin},
     prelude::*,
-    window::{AppLifecycle, ScreenEdge, WindowMode},
+    window::{AppLifecycle, WindowMode},
     winit::WinitSettings,
 };
 
@@ -15,7 +15,6 @@ pub fn main() {
     app.add_plugins(
         DefaultPlugins
             .set(LogPlugin {
-                // This will show some log events from Bevy to the native logger.
                 level: Level::DEBUG,
                 filter: "wgpu=error,naga=info,bevy_render=info,bevy_ecs=trace".to_string(),
                 ..Default::default()
@@ -24,22 +23,13 @@ pub fn main() {
                 primary_window: Some(Window {
                     resizable: false,
                     mode: WindowMode::BorderlessFullscreen(MonitorSelection::Primary),
-                    // on iOS, gestures must be enabled.
-                    // This doesn't work on Android
-                    recognize_rotation_gesture: true,
-                    // Only has an effect on iOS
-                    prefers_home_indicator_hidden: true,
-                    // Only has an effect on iOS
-                    prefers_status_bar_hidden: true,
-                    // Only has an effect on iOS
-                    preferred_screen_edges_deferring_system_gestures: ScreenEdge::Bottom,
                     ..default()
                 }),
                 ..default()
             }),
     )
     .insert_resource(WinitSettings::mobile())
-    .add_systems(Startup, (setup_scene, setup_music))
+    .add_systems(Startup, setup_scene)
     .add_systems(
         Update,
         (
@@ -174,24 +164,12 @@ fn button_handler(
     }
 }
 
-fn setup_music(asset_server: Res<AssetServer>, mut commands: Commands) {
-    commands.spawn((
-        AudioPlayer::new(asset_server.load("sounds/Windless Slopes.ogg")),
-        PlaybackSettings::LOOP,
-    ));
-}
-
-// Pause audio when app goes into background and resume when it returns.
-// This is handled by the OS on iOS, but not on Android.
-fn handle_lifetime(
-    mut app_lifecycle_reader: MessageReader<AppLifecycle>,
-    music_controller: Single<&AudioSink>,
-) {
+fn handle_lifetime(mut app_lifecycle_reader: MessageReader<AppLifecycle>) {
     for app_lifecycle in app_lifecycle_reader.read() {
         match app_lifecycle {
             AppLifecycle::Idle | AppLifecycle::WillSuspend | AppLifecycle::WillResume => {}
-            AppLifecycle::Suspended => music_controller.pause(),
-            AppLifecycle::Running => music_controller.play(),
+            AppLifecycle::Suspended => {}
+            AppLifecycle::Running => {}
         }
     }
 }
